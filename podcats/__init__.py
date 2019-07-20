@@ -259,11 +259,15 @@ class S3Episode(Episode):
 
     @property
     def url(self):
-        return s3_client.generate_presigned_url(
-            'get_object',
-            ExpiresIn=0,
-            Params={'Bucket': self.filename.bucket_name, 'Key': self.filename.key}
+        bucket_location = s3_client.get_bucket_location(
+            Bucket=self.filename.bucket_name
         )
+        return "https://s3-{0}.amazonaws.com/{1}/{2}".format(
+            bucket_location['LocationConstraint'],
+            self.filename.bucket_name,
+            self.filename.key
+        )
+
 
 class Channel:
     """Podcast channel"""
